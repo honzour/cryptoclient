@@ -4,28 +4,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".gui.MainActivity">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    tools:context=".gui.MainActivity">
-    <Spinner
-        android:id="@+id/main_stock"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
-    <Spinner
-        android:visibility="gone"
-        android:id="@+id/main_pair"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bid_ask"
-        />
+        android:orientation="vertical"
+        tools:context=".gui.MainActivity">
 
-</LinearLayout>
+        <Spinner
+            android:id="@+id/main_stock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/main_pair"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/bid_ask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+
+    </LinearLayout>
 </ScrollView>
