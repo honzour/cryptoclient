@@ -12,7 +12,12 @@ import android.widget.Toast;
 import org.knowm.xchange.BaseExchange;
 
 import org.knowm.xchange.currency.CurrencyPair;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import cz.honza.cryptoclient.CryptoClientApplication;
@@ -58,13 +63,21 @@ public class MainActivity extends Activity {
         mPairs.setSelection(getStockInfoResponse.selectedPair);
     }
 
+    private String formatDate(long ms) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date(ms));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        sdf.setTimeZone(TimeZone.getDefault());
+        return sdf.format(calendar.getTime());
+    }
+
     public void refreshTicker(GetTickerResponse getTickerResponse) {
 
         if (!getTickerResponse.isValid()) {
             mBidAsk.setText(getTickerResponse.getError());
         } else {
             mBidAsk.setText("Bid = " + getTickerResponse.ticker.getBid() +
-                    ", Ask = " + getTickerResponse.ticker.getAsk());
+                    ", Ask = " + getTickerResponse.ticker.getAsk() + "\n" + formatDate(getTickerResponse.created));
         }
     }
 
