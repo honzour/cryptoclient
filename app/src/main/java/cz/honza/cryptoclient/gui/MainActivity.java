@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
     private TextView mBidAsk;
     private Spinner mStocks;
     private Spinner mPairs;
+    private View mRefresh;
 
     public void refreshStock(String simpleName) {
         GetStockInfoResponse getStockInfoResponse = CryptoClientApplication.getInstance().stockInfoResponseMap.get(simpleName);
@@ -107,9 +108,10 @@ public class MainActivity extends Activity {
         CryptoClientApplication.getInstance().mainActivity = this;
         setContentView(R.layout.activity_main);
 
-        mBidAsk = findViewById(R.id.bid_ask);
+        mBidAsk = findViewById(R.id.main_bid_ask);
         mStocks = findViewById(R.id.main_stock);
         mPairs = findViewById(R.id.main_pair);
+        mRefresh = findViewById(R.id.main_refresh);
 
         ArrayAdapter adapter = adapterFromStocks(CryptoClientApplication.getInstance().STOCKS);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -126,5 +128,16 @@ public class MainActivity extends Activity {
             }
         });
         mStocks.setSelection(CryptoClientApplication.getInstance().selectedStock);
+
+        mRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mPairs.getVisibility() == View.VISIBLE) {
+                    // TODO
+                } else {
+                    CryptoClientApplication.getInstance().refreshStock(mStocks.getSelectedItemPosition());
+                }
+            }
+        });
     }
 }

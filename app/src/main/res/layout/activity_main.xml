@@ -23,11 +23,17 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/bid_ask"
+            android:id="@+id/main_bid_ask"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp" />
+        <Button
+            android:id="@+id/main_refresh"
+            android:text="@string/refresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
 
     </LinearLayout>
 </ScrollView>
