@@ -131,16 +131,17 @@ public class CryptoClientApplication extends Application {
      */
     public void refreshTicker(final GetStockInfoResponse stock, CurrencyPair currencyPair) {
 
+        final GetTickerResponse getTickerResponseCache = stock.tickersMap.get(currencyPair);
+        if (getTickerResponseCache != null && getTickerResponseCache.isValid() && getTickerResponseCache.isFresh()) {
+            mainActivity.refreshTicker(getTickerResponseCache);
+            return;
+        }
         final Handler handler = new Handler();
 
         new Thread() {
             @Override
             public void run() {
-                GetTickerResponse getTickerResponseCache = stock.tickersMap.get(currencyPair);
-                if (getTickerResponseCache != null && getTickerResponseCache.isValid() && getTickerResponseCache.isFresh()) {
-                    mainActivity.refreshTicker(getTickerResponseCache);
-                    return;
-                }
+
                 final GetTickerResponse getTickerResponse = getTicker(stock.exchange, currencyPair);
                 handler.post(new Runnable() {
                     @Override
