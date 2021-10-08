@@ -89,14 +89,17 @@ public class CryptoClientApplication extends Application {
     /**
      * Run from the main thread
      */
-    public void refreshStock(final int index) {
+    public void refreshStock(final int index, boolean force) {
         selectedStock = index;
         final Class<? extends BaseExchange> stockClass = getStockClass(index);
         final String stockName = stockClass.getSimpleName();
-        final GetStockInfoResponse getStockInfoResponse = stockInfoResponseMap.get(stockName);
-        if (getStockInfoResponse != null && getStockInfoResponse.isValid() && getStockInfoResponse.isFresh()) {
-            mainActivity.refreshStock(stockName);
-            return;
+        if (!force) {
+
+            final GetStockInfoResponse getStockInfoResponse = stockInfoResponseMap.get(stockName);
+            if (getStockInfoResponse != null && getStockInfoResponse.isValid() && getStockInfoResponse.isFresh()) {
+                mainActivity.refreshStock(stockName);
+                return;
+            }
         }
 
         final Handler handler = new Handler();

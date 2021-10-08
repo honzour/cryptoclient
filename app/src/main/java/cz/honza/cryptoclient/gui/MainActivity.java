@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
     private String formatDate(long ms) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date(ms));
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getDefault());
         return sdf.format(calendar.getTime());
     }
@@ -119,12 +119,12 @@ public class MainActivity extends Activity {
         mStocks.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                CryptoClientApplication.getInstance().refreshStock(i);
+                CryptoClientApplication.getInstance().refreshStock(i, false);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                CryptoClientApplication.getInstance().refreshStock(-1);
+                CryptoClientApplication.getInstance().refreshStock(-1, false);
             }
         });
         mStocks.setSelection(CryptoClientApplication.getInstance().selectedStock);
@@ -134,8 +134,9 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 if (mPairs.getVisibility() == View.VISIBLE) {
                     // TODO
+
                 } else {
-                    CryptoClientApplication.getInstance().refreshStock(mStocks.getSelectedItemPosition());
+                    CryptoClientApplication.getInstance().refreshStock(mStocks.getSelectedItemPosition(), true);
                 }
             }
         });
