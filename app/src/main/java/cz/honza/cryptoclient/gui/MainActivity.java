@@ -32,15 +32,7 @@ public class MainActivity extends Activity {
     private Spinner mPairs;
     private View mRefresh;
 
-    public void refreshStock(String simpleName) {
-        GetStockInfoResponse getStockInfoResponse = CryptoClientApplication.getInstance().stockInfoResponseMap.get(simpleName);
-        if (!getStockInfoResponse.isValid()) {
-            Toast.makeText(MainActivity.this, getStockInfoResponse.getError(), Toast.LENGTH_LONG).show();
-            mPairs.setVisibility(View.GONE);
-            mBidAsk.setText(getStockInfoResponse.getError());
-            return;
-        }
-
+    private void initPairs(GetStockInfoResponse getStockInfoResponse) {
         mPairs.setVisibility(View.VISIBLE);
         final List<String> pairsString = getStockInfoResponse.currencyPairs.stream().map(pair -> pair.toString()).sorted().collect(Collectors.toList());
         final ArrayAdapter adapter = adapterFromPairs(pairsString);
@@ -51,17 +43,28 @@ public class MainActivity extends Activity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String pair = pairsString.get(i);
                 CurrencyPair currencyPair = getStockInfoResponse.currencyPairs.stream().filter(p -> p.toString().equals(pair)).findFirst().get();
-                CryptoClientApplication.getInstance().refreshTicker(getStockInfoResponse, currencyPair);
+                CryptoClientApplication.getInstance().refreshTicker(getStockInfoResponse, currencyPair, false);
                 getStockInfoResponse.selectedPair = i;
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                CryptoClientApplication.getInstance().refreshTicker(getStockInfoResponse, null);
+                CryptoClientApplication.getInstance().refreshTicker(getStockInfoResponse, null, false);
                 getStockInfoResponse.selectedPair = -1;
             }
         });
         mPairs.setSelection(getStockInfoResponse.selectedPair);
+    }
+
+    public void refreshStock(String simpleName) {
+        GetStockInfoResponse getStockInfoResponse = CryptoClientApplication.getInstance().stockInfoResponseMap.get(simpleName);
+        if (!getStockInfoResponse.isValid()) {
+            Toast.makeText(MainActivity.this, getStockInfoResponse.getError(), Toast.LENGTH_LONG).show();
+            mPairs.setVisibility(View.GONE);
+            mBidAsk.setText(getStockInfoResponse.getError());
+            return;
+        }
+        initPairs(getStockInfoResponse);
     }
 
     private String formatDate(long ms) {
@@ -100,19 +103,16 @@ public class MainActivity extends Activity {
         return adapter;
     }
 
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        CryptoClientApplication.getInstance().mainActivity = this;
+    private void initFields() {
         setContentView(R.layout.activity_main);
 
         mBidAsk = findViewById(R.id.main_bid_ask);
         mStocks = findViewById(R.id.main_stock);
         mPairs = findViewById(R.id.main_pair);
         mRefresh = findViewById(R.id.main_refresh);
+    }
 
+    private void initStocks() {
         ArrayAdapter adapter = adapterFromStocks(CryptoClientApplication.getInstance().STOCKS);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mStocks.setAdapter(adapter);
@@ -128,17 +128,33 @@ public class MainActivity extends Activity {
             }
         });
         mStocks.setSelection(CryptoClientApplication.getInstance().selectedStock);
+    }
 
+    private void initRefresh() {
         mRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mPairs.getVisibility() == View.VISIBLE) {
-                    // TODO
+
+                    String stock = CryptoClientApplication.getInstance().STOCKS.get(mStocks.getSelectedItemPosition()).getSimpleName();
+                    GetStockInfoResponse getStockInfoResponse = CryptoClientApplication.getInstance().stockInfoResponseMap.get(stock);
+                    CryptoClientApplication.getInstance().refreshTicker(
+                            getStockInfoResponse, getStockInfoResponse.currencyPairs.get(getStockInfoResponse.selectedPair), true);
 
                 } else {
                     CryptoClientApplication.getInstance().refreshStock(mStocks.getSelectedItemPosition(), true);
                 }
             }
         });
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        CryptoClientApplication.getInstance().mainActivity = this;
+        initFields();
+        initStocks();
+        initRefresh();
     }
 }
