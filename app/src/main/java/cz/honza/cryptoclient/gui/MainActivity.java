@@ -25,7 +25,7 @@ import cz.honza.cryptoclient.R;
 import cz.honza.cryptoclient.data.GetStockInfoResponse;
 import cz.honza.cryptoclient.data.GetTickerResponse;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements MainUpdater {
 
     private TextView mBidAsk;
     private Spinner mStocks;
@@ -56,6 +56,7 @@ public class MainActivity extends Activity {
         mPairs.setSelection(getStockInfoResponse.selectedPair);
     }
 
+    @Override
     public void refreshStock(String simpleName) {
         GetStockInfoResponse getStockInfoResponse = CryptoClientApplication.getInstance().stockInfoResponseMap.get(simpleName);
         if (!getStockInfoResponse.isValid()) {
@@ -75,6 +76,7 @@ public class MainActivity extends Activity {
         return sdf.format(calendar.getTime());
     }
 
+    @Override
     public void refreshTicker(GetTickerResponse getTickerResponse) {
 
         if (!getTickerResponse.isValid()) {
@@ -148,11 +150,10 @@ public class MainActivity extends Activity {
         });
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CryptoClientApplication.getInstance().mainActivity = this;
+        CryptoClientApplication.getInstance().mainUpdater = this;
         initFields();
         initStocks();
         initRefresh();

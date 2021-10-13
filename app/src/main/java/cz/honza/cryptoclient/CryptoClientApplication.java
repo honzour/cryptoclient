@@ -33,12 +33,13 @@ import java.util.stream.Collectors;
 import cz.honza.cryptoclient.data.GetStockInfoResponse;
 import cz.honza.cryptoclient.data.GetTickerResponse;
 import cz.honza.cryptoclient.gui.MainActivity;
+import cz.honza.cryptoclient.gui.MainUpdater;
 
 public class CryptoClientApplication extends Application {
     private static CryptoClientApplication instance = null;
 
 
-    public MainActivity mainActivity;
+    public MainUpdater mainUpdater;
     public final List<Class<? extends BaseExchange>> STOCKS = new ArrayList<>();
     public int selectedStock = 0;
     public Map<String, GetStockInfoResponse> stockInfoResponseMap = new HashMap<>();
@@ -97,7 +98,7 @@ public class CryptoClientApplication extends Application {
 
             final GetStockInfoResponse getStockInfoResponse = stockInfoResponseMap.get(stockName);
             if (getStockInfoResponse != null && getStockInfoResponse.isValid() && getStockInfoResponse.isFresh()) {
-                mainActivity.refreshStock(stockName);
+                mainUpdater.refreshStock(stockName);
                 return;
             }
         }
@@ -112,7 +113,7 @@ public class CryptoClientApplication extends Application {
                     @Override
                     public void run() {
                         stockInfoResponseMap.put(stockName, getStockInfoResponse);
-                        mainActivity.refreshStock(stockName);
+                        mainUpdater.refreshStock(stockName);
                     }
                 });
             }
@@ -136,7 +137,7 @@ public class CryptoClientApplication extends Application {
 
         final GetTickerResponse getTickerResponseCache = stock.tickersMap.get(currencyPair);
         if (!force && getTickerResponseCache != null && getTickerResponseCache.isValid() && getTickerResponseCache.isFresh()) {
-            mainActivity.refreshTicker(getTickerResponseCache);
+            mainUpdater.refreshTicker(getTickerResponseCache);
             return;
         }
         final Handler handler = new Handler();
@@ -150,7 +151,7 @@ public class CryptoClientApplication extends Application {
                     @Override
                     public void run() {
                         stock.tickersMap.put(currencyPair, getTickerResponse);
-                        mainActivity.refreshTicker(getTickerResponse);
+                        mainUpdater.refreshTicker(getTickerResponse);
                     }
                 });
             }
