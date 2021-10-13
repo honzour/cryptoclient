@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
 
     private void initPairs(GetStockInfoResponse getStockInfoResponse) {
         mPairs.setVisibility(View.VISIBLE);
-        final List<String> pairsString = getStockInfoResponse.currencyPairs.stream().map(pair -> pair.toString()).sorted().collect(Collectors.toList());
+        final List<String> pairsString = getStockInfoResponse.currencyPairs.stream().map(pair -> pair.toString()).collect(Collectors.toList());
         final ArrayAdapter adapter = adapterFromPairs(pairsString);
 
         mPairs.setAdapter(adapter);
