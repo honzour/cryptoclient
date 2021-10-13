@@ -40,14 +40,13 @@ public class StockUpdater {
      * Run from the main thread
      */
     public static void refreshStock(final int index, boolean force) {
-        CryptoClientApplication.getInstance().selectedStock = index;
         final Class<? extends BaseExchange> stockClass = getStockClass(index);
         final String stockName = stockClass.getSimpleName();
         if (!force) {
 
             final GetStockInfoResponse getStockInfoResponse = CryptoClientApplication.getInstance().stockInfoResponseMap.get(stockName);
             if (getStockInfoResponse != null && getStockInfoResponse.isValid() && getStockInfoResponse.isFresh()) {
-                CryptoClientApplication.getInstance().mainUpdater.refreshStock(stockName);
+                CryptoClientApplication.getInstance().mainUpdater.refreshStock();
                 return;
             }
         }
@@ -62,7 +61,7 @@ public class StockUpdater {
                     @Override
                     public void run() {
                         CryptoClientApplication.getInstance().stockInfoResponseMap.put(stockName, getStockInfoResponse);
-                        CryptoClientApplication.getInstance().mainUpdater.refreshStock(stockName);
+                        CryptoClientApplication.getInstance().mainUpdater.refreshStock();
                     }
                 });
             }

@@ -57,9 +57,15 @@ public class MainActivity extends Activity implements MainUpdater {
         mPairs.setSelection(getStockInfoResponse.selectedPair);
     }
 
+    private GetStockInfoResponse getStockInfo() {
+        int selected = mStocks.getSelectedItemPosition();
+        String simpleName = CryptoClientApplication.getInstance().STOCKS.get(selected).getSimpleName();
+        return CryptoClientApplication.getInstance().stockInfoResponseMap.get(simpleName);
+    }
+
     @Override
-    public void refreshStock(String simpleName) {
-        GetStockInfoResponse getStockInfoResponse = CryptoClientApplication.getInstance().stockInfoResponseMap.get(simpleName);
+    public void refreshStock() {
+        GetStockInfoResponse getStockInfoResponse = getStockInfo();
         if (!getStockInfoResponse.isValid()) {
             Toast.makeText(MainActivity.this, getStockInfoResponse.getError(), Toast.LENGTH_LONG).show();
             mPairs.setVisibility(View.GONE);
@@ -122,11 +128,13 @@ public class MainActivity extends Activity implements MainUpdater {
         mStocks.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                CryptoClientApplication.getInstance().selectedStock = i;
                 StockUpdater.refreshStock(i, false);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
+                CryptoClientApplication.getInstance().selectedStock = -1;
                 StockUpdater.refreshStock(-1, false);
             }
         });
