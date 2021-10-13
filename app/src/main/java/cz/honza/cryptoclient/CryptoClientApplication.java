@@ -24,6 +24,7 @@ import org.knowm.xchange.poloniex.PoloniexExchange;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,7 @@ public class CryptoClientApplication extends Application {
 
         try {
             Exchange exchange = ExchangeFactory.INSTANCE.createExchange(stockClass);
-            List<CurrencyPair> pairs = exchange.getExchangeSymbols();
+            List<CurrencyPair> pairs = exchange.getExchangeSymbols().stream().sorted(Comparator.comparing(CurrencyPair::toString)).collect(Collectors.toList());
             return new GetStockInfoResponse(null, exchange, pairs);
         } catch (Throwable t) {
             return new GetStockInfoResponse(t, null, null);
