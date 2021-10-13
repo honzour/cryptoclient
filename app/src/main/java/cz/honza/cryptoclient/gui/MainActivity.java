@@ -24,6 +24,7 @@ import cz.honza.cryptoclient.CryptoClientApplication;
 import cz.honza.cryptoclient.R;
 import cz.honza.cryptoclient.data.GetStockInfoResponse;
 import cz.honza.cryptoclient.data.GetTickerResponse;
+import cz.honza.cryptoclient.nologin.StockUpdater;
 
 public class MainActivity extends Activity implements MainUpdater {
 
@@ -43,13 +44,13 @@ public class MainActivity extends Activity implements MainUpdater {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String pair = pairsString.get(i);
                 CurrencyPair currencyPair = getStockInfoResponse.currencyPairs.stream().filter(p -> p.toString().equals(pair)).findFirst().get();
-                CryptoClientApplication.getInstance().refreshTicker(getStockInfoResponse, currencyPair, false);
+                StockUpdater.refreshTicker(getStockInfoResponse, currencyPair, false);
                 getStockInfoResponse.selectedPair = i;
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                CryptoClientApplication.getInstance().refreshTicker(getStockInfoResponse, null, false);
+                StockUpdater.refreshTicker(getStockInfoResponse, null, false);
                 getStockInfoResponse.selectedPair = -1;
             }
         });
@@ -121,12 +122,12 @@ public class MainActivity extends Activity implements MainUpdater {
         mStocks.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                CryptoClientApplication.getInstance().refreshStock(i, false);
+                StockUpdater.refreshStock(i, false);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                CryptoClientApplication.getInstance().refreshStock(-1, false);
+                StockUpdater.refreshStock(-1, false);
             }
         });
         mStocks.setSelection(CryptoClientApplication.getInstance().selectedStock);
@@ -140,11 +141,11 @@ public class MainActivity extends Activity implements MainUpdater {
 
                     String stock = CryptoClientApplication.getInstance().STOCKS.get(mStocks.getSelectedItemPosition()).getSimpleName();
                     GetStockInfoResponse getStockInfoResponse = CryptoClientApplication.getInstance().stockInfoResponseMap.get(stock);
-                    CryptoClientApplication.getInstance().refreshTicker(
+                    StockUpdater.refreshTicker(
                             getStockInfoResponse, getStockInfoResponse.currencyPairs.get(getStockInfoResponse.selectedPair), true);
 
                 } else {
-                    CryptoClientApplication.getInstance().refreshStock(mStocks.getSelectedItemPosition(), true);
+                    StockUpdater.refreshStock(mStocks.getSelectedItemPosition(), true);
                 }
             }
         });
