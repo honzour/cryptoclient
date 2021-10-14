@@ -75,7 +75,7 @@ public class StockUpdater {
 
         final GetTickerResponse getTickerResponseCache = stock.tickersMap.get(currencyPair);
         if (!force && getTickerResponseCache != null && getTickerResponseCache.isValid() && getTickerResponseCache.isFresh()) {
-            CryptoClientApplication.getInstance().mainUpdater.refreshTicker(getTickerResponseCache);
+            CryptoClientApplication.getInstance().mainUpdater.refreshTicker();
             return;
         }
         final Handler handler = new Handler();
@@ -89,7 +89,7 @@ public class StockUpdater {
                     @Override
                     public void run() {
                         stock.tickersMap.put(currencyPair, getTickerResponse);
-                        CryptoClientApplication.getInstance().mainUpdater.refreshTicker(getTickerResponse);
+                        CryptoClientApplication.getInstance().mainUpdater.refreshTicker();
                     }
                 });
             }

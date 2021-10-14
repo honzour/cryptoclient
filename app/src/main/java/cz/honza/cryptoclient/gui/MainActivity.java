@@ -84,8 +84,10 @@ public class MainActivity extends Activity implements MainUpdater {
     }
 
     @Override
-    public void refreshTicker(GetTickerResponse getTickerResponse) {
-
+    public void refreshTicker() {
+        GetStockInfoResponse getStockInfoResponse = getStockInfo();
+        CurrencyPair currencyPair = getStockInfoResponse.currencyPairs.get(mPairs.getSelectedItemPosition());
+        GetTickerResponse getTickerResponse = getStockInfoResponse.tickersMap.get(currencyPair);
         if (!getTickerResponse.isValid()) {
             mBidAsk.setText(getTickerResponse.getError());
         } else {
@@ -146,11 +148,11 @@ public class MainActivity extends Activity implements MainUpdater {
             @Override
             public void onClick(View view) {
                 if (mPairs.getVisibility() == View.VISIBLE) {
-
-                    String stock = CryptoClientApplication.getInstance().STOCKS.get(mStocks.getSelectedItemPosition()).getSimpleName();
-                    GetStockInfoResponse getStockInfoResponse = CryptoClientApplication.getInstance().stockInfoResponseMap.get(stock);
+                    GetStockInfoResponse getStockInfoResponse = getStockInfo();
                     StockUpdater.refreshTicker(
-                            getStockInfoResponse, getStockInfoResponse.currencyPairs.get(getStockInfoResponse.selectedPair), true);
+                            getStockInfoResponse,
+                            getStockInfoResponse.currencyPairs.get(getStockInfoResponse.selectedPair),
+                            true);
 
                 } else {
                     StockUpdater.refreshStock(mStocks.getSelectedItemPosition(), true);
