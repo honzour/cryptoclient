@@ -91,8 +91,11 @@ public class MainActivity extends Activity implements MainUpdater {
         if (!getTickerResponse.isValid()) {
             mBidAsk.setText(getTickerResponse.getError());
         } else {
-            mBidAsk.setText("Bid = " + getTickerResponse.ticker.getBid() +
-                    ", Ask = " + getTickerResponse.ticker.getAsk() + "\n" + formatDate(getTickerResponse.created));
+            mBidAsk.setText(getResources().getText(R.string.bid).toString() + " = " +
+                    getTickerResponse.ticker.getBid() +
+                    ", " + getResources().getText(R.string.ask).toString() + " = " +
+                    getTickerResponse.ticker.getAsk() + "\n" +
+                    formatDate(getTickerResponse.created));
         }
     }
 
