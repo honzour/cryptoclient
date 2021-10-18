@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import cz.honza.cryptoclient.data.GetStockInfoResponse;
 import cz.honza.cryptoclient.gui.MainUpdater;
@@ -26,7 +28,7 @@ public class CryptoClientApplication extends Application {
 
 
     public MainUpdater mainUpdater;
-    public final List<Class<? extends BaseExchange>> STOCKS = new ArrayList<>();
+    private final List<Class<? extends BaseExchange>> STOCKS = new ArrayList<>();
     public int selectedStock = 0;
     public Map<String, GetStockInfoResponse> stockInfoResponseMap = new HashMap<>();
 
@@ -45,6 +47,31 @@ public class CryptoClientApplication extends Application {
 
     public static CryptoClientApplication getInstance() {
         return instance;
+    }
+
+    /**
+     *
+     * @param index zero based index from combobox
+     * @param filter null if no filter
+     * @return null (no IndexOutOfBoundException!) or found stock
+     */
+    public Class<? extends BaseExchange> getStock(int index, String filter) {
+        if (filter == null || "".equals(filter)) {
+            if (index < 0 || index >= STOCKS.size()) {
+                return null;
+            }
+            return STOCKS.get(index);
+        }
+        Optional<Class<? extends BaseExchange>> found =
+                STOCKS.stream().filter(stock -> stock.getSimpleName().contains(filter)).skip(index).findFirst();
+        return found.orElse(null);
+    }
+
+    public List<Class<? extends BaseExchange>> getStocks(String filter) {
+        if (filter == null || "".equals(filter)) {
+            return STOCKS;
+        }
+        return STOCKS.stream().filter(stock -> stock.getSimpleName().contains(filter)).collect(Collectors.toList());
     }
 
     @Override

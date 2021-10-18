@@ -2,9 +2,13 @@ package cz.honza.cryptoclient.gui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +36,8 @@ public class MainActivity extends Activity implements MainUpdater {
     private Spinner mStocks;
     private Spinner mPairs;
     private View mRefresh;
+    private EditText mStockFilter;
+    private EditText mPairFilter;
 
     private void initPairs(GetStockInfoResponse getStockInfoResponse) {
         mPairs.setVisibility(View.VISIBLE);
@@ -59,7 +65,7 @@ public class MainActivity extends Activity implements MainUpdater {
 
     private GetStockInfoResponse getStockInfo() {
         int selected = mStocks.getSelectedItemPosition();
-        String simpleName = CryptoClientApplication.getInstance().STOCKS.get(selected).getSimpleName();
+        String simpleName = CryptoClientApplication.getInstance().getStocks(null).get(selected).getSimpleName();
         return CryptoClientApplication.getInstance().stockInfoResponseMap.get(simpleName);
     }
 
@@ -124,26 +130,46 @@ public class MainActivity extends Activity implements MainUpdater {
         mStocks = findViewById(R.id.main_stock);
         mPairs = findViewById(R.id.main_pair);
         mRefresh = findViewById(R.id.main_refresh);
+        mPairFilter = findViewById(R.id.main_filter_currency);
+        mStockFilter = findViewById(R.id.main_filter_stock);
+    }
+
+    private void initStockFilter() {
+        mStockFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                initStocks();
+            }
+        });
     }
 
     private void initStocks() {
-        ArrayAdapter adapter = adapterFromStocks(CryptoClientApplication.getInstance().STOCKS);
+        ArrayAdapter adapter = adapterFromStocks(CryptoClientApplication.getInstance().getStocks(mStockFilter.getText().toString()));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mStocks.setAdapter(adapter);
         mStocks.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 CryptoClientApplication.getInstance().selectedStock = i;
-                StockUpdater.refreshStock(i, false);
+                StockUpdater.refreshStock(i, mStockFilter.getText().toString(), false);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 CryptoClientApplication.getInstance().selectedStock = -1;
-                StockUpdater.refreshStock(-1, false);
+                StockUpdater.refreshStock(-1, null, false);
             }
         });
         mStocks.setSelection(CryptoClientApplication.getInstance().selectedStock);
+        StockUpdater.refreshStock(mStocks.getSelectedItemPosition(), mStockFilter.getText().toString(), false);
     }
 
     private void initRefresh() {
@@ -158,7 +184,7 @@ public class MainActivity extends Activity implements MainUpdater {
                             true);
 
                 } else {
-                    StockUpdater.refreshStock(mStocks.getSelectedItemPosition(), true);
+                    StockUpdater.refreshStock(mStocks.getSelectedItemPosition(), mStockFilter.getText().toString(),true);
                 }
             }
         });
@@ -171,5 +197,6 @@ public class MainActivity extends Activity implements MainUpdater {
         initFields();
         initStocks();
         initRefresh();
+        initStockFilter();
     }
 }

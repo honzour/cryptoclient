@@ -17,13 +17,6 @@ import cz.honza.cryptoclient.data.GetStockInfoResponse;
 import cz.honza.cryptoclient.data.GetTickerResponse;
 
 public class StockUpdater {
-    private static Class<? extends BaseExchange> getStockClass(int index) {
-        if (index >= 0 && index < CryptoClientApplication.getInstance().STOCKS.size()) {
-            return CryptoClientApplication.getInstance().STOCKS.get(index);
-        } else {
-            return null;
-        }
-    }
 
     private static GetStockInfoResponse getStock(Class<? extends BaseExchange> stockClass) {
 
@@ -39,8 +32,8 @@ public class StockUpdater {
     /**
      * Run from the main thread
      */
-    public static void refreshStock(final int index, boolean force) {
-        final Class<? extends BaseExchange> stockClass = getStockClass(index);
+    public static void refreshStock(final int index, String filter, boolean force) {
+        final Class<? extends BaseExchange> stockClass = CryptoClientApplication.getInstance().getStock(index, filter);
         final String stockName = stockClass.getSimpleName();
         if (!force) {
 
