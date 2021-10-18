@@ -65,7 +65,7 @@ public class MainActivity extends Activity implements MainUpdater {
 
     private GetStockInfoResponse getStockInfo() {
         int selected = mStocks.getSelectedItemPosition();
-        String simpleName = CryptoClientApplication.getInstance().getStocks(null).get(selected).getSimpleName();
+        String simpleName = CryptoClientApplication.getInstance().getStocks(mStockFilter.getText().toString()).get(selected).getSimpleName();
         return CryptoClientApplication.getInstance().stockInfoResponseMap.get(simpleName);
     }
 
