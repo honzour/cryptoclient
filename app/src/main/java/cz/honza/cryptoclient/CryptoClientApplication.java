@@ -56,10 +56,10 @@ public class CryptoClientApplication extends Application {
      * @return null (no IndexOutOfBoundException!) or found stock
      */
     public Class<? extends BaseExchange> getStock(int index, String filter) {
+        if (index < 0 || index >= STOCKS.size()) {
+            return null;
+        }
         if (filter == null || "".equals(filter)) {
-            if (index < 0 || index >= STOCKS.size()) {
-                return null;
-            }
             return STOCKS.get(index);
         }
         Optional<Class<? extends BaseExchange>> found =

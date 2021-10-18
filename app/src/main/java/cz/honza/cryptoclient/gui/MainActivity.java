@@ -65,13 +65,22 @@ public class MainActivity extends Activity implements MainUpdater {
 
     private GetStockInfoResponse getStockInfo() {
         int selected = mStocks.getSelectedItemPosition();
-        String simpleName = CryptoClientApplication.getInstance().getStocks(mStockFilter.getText().toString()).get(selected).getSimpleName();
+        Class<? extends BaseExchange> stockClass = CryptoClientApplication.getInstance().getStock(selected, mStockFilter.getText().toString());
+        if (stockClass == null) {
+            return null;
+        }
+        String simpleName = stockClass.getSimpleName();
         return CryptoClientApplication.getInstance().stockInfoResponseMap.get(simpleName);
     }
 
     @Override
     public void refreshStock() {
         GetStockInfoResponse getStockInfoResponse = getStockInfo();
+        if (getStockInfoResponse == null) {
+            mPairs.setVisibility(View.GONE);
+            mBidAsk.setText("");
+            return;
+        }
         if (!getStockInfoResponse.isValid()) {
             Toast.makeText(MainActivity.this, getStockInfoResponse.getError(), Toast.LENGTH_LONG).show();
             mPairs.setVisibility(View.GONE);
@@ -94,6 +103,10 @@ public class MainActivity extends Activity implements MainUpdater {
         GetStockInfoResponse getStockInfoResponse = getStockInfo();
         CurrencyPair currencyPair = getStockInfoResponse.currencyPairs.get(mPairs.getSelectedItemPosition());
         GetTickerResponse getTickerResponse = getStockInfoResponse.tickersMap.get(currencyPair);
+        if (getTickerResponse == null) {
+            mBidAsk.setText("");
+            return;
+        }
         if (!getTickerResponse.isValid()) {
             mBidAsk.setText(getTickerResponse.getError());
         } else {

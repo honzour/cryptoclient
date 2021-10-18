@@ -34,6 +34,10 @@ public class StockUpdater {
      */
     public static void refreshStock(final int index, String filter, boolean force) {
         final Class<? extends BaseExchange> stockClass = CryptoClientApplication.getInstance().getStock(index, filter);
+        if (stockClass == null) {
+            CryptoClientApplication.getInstance().mainUpdater.refreshStock();
+            return;
+        }
         final String stockName = stockClass.getSimpleName();
         if (!force) {
 
