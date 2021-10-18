@@ -3,4 +3,6 @@
     <string name="refresh">Refresh</string>
     <string name="bid">Bid</string>
     <string name="ask">Ask</string>
+    <string name="filter_stock">Stock filter</string>
+    <string name="filter_pair">Pair filter</string>
 </resources>

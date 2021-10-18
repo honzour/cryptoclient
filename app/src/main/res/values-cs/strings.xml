@@ -4,4 +4,6 @@
     <string name="refresh">Přenačti</string>
     <string name="bid">Nákup</string>
     <string name="ask">Prodej</string>
+    <string name="filter_stock">Filtr burz</string>
+    <string name="filter_pair">Filtr párů</string>
 </resources>
