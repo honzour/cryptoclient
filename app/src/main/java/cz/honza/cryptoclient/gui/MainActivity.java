@@ -39,9 +39,14 @@ public class MainActivity extends Activity implements MainUpdater {
     private EditText mStockFilter;
     private EditText mPairFilter;
 
-    private GetStockInfoResponse getStockInfo() {
+    private Class<? extends BaseExchange> getStock() {
         int selected = mStocks.getSelectedItemPosition();
-        Class<? extends BaseExchange> stockClass = CryptoClientApplication.getInstance().getStock(selected, mStockFilter.getText().toString());
+        return CryptoClientApplication.getInstance().getStock(selected, mStockFilter.getText().toString());
+    }
+
+    private GetStockInfoResponse getStockInfo() {
+
+        Class<? extends BaseExchange> stockClass = getStock();
         if (stockClass == null) {
             return null;
         }
@@ -80,9 +85,7 @@ public class MainActivity extends Activity implements MainUpdater {
         mPairs.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                GetStockInfoResponse getStockInfoResponse = getStockInfo();
-                CurrencyPair currencyPair = getPair();
-                StockUpdater.refreshTicker(getStockInfoResponse, currencyPair, false);
+                StockUpdater.refreshTicker(getStock(), getPair(), false);
             }
 
             @Override
@@ -91,8 +94,6 @@ public class MainActivity extends Activity implements MainUpdater {
             }
         });
     }
-
-
 
     @Override
     public void refreshStock() {
@@ -214,17 +215,16 @@ public class MainActivity extends Activity implements MainUpdater {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 CryptoClientApplication.getInstance().selectedStock = i;
-                StockUpdater.refreshStock(i, mStockFilter.getText().toString(), false);
+                StockUpdater.refreshStock(getStock(), false);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                CryptoClientApplication.getInstance().selectedStock = -1;
-                StockUpdater.refreshStock(-1, null, false);
+                // TODO
             }
         });
         mStocks.setSelection(CryptoClientApplication.getInstance().selectedStock);
-        StockUpdater.refreshStock(mStocks.getSelectedItemPosition(), mStockFilter.getText().toString(), false);
+        StockUpdater.refreshStock(getStock(), false);
     }
 
     private void initRefresh() {
@@ -232,11 +232,10 @@ public class MainActivity extends Activity implements MainUpdater {
             @Override
             public void onClick(View view) {
                 if (mPairs.getVisibility() == View.VISIBLE) {
-                    GetStockInfoResponse getStockInfoResponse = getStockInfo();
-                    StockUpdater.refreshTicker(getStockInfoResponse, getPair(),true);
+                    StockUpdater.refreshTicker(getStock(), getPair(),true);
 
                 } else {
-                    StockUpdater.refreshStock(mStocks.getSelectedItemPosition(), mStockFilter.getText().toString(),true);
+                    StockUpdater.refreshStock(getStock(),true);
                 }
             }
         });

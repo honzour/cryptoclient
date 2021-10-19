@@ -32,8 +32,8 @@ public class StockUpdater {
     /**
      * Run from the main thread
      */
-    public static void refreshStock(final int index, String filter, boolean force) {
-        final Class<? extends BaseExchange> stockClass = CryptoClientApplication.getInstance().getStock(index, filter);
+    public static void refreshStock(final Class<? extends BaseExchange> stockClass, boolean force) {
+        //final Class<? extends BaseExchange> stockClass = CryptoClientApplication.getInstance().getStock(index, filter);
         if (stockClass == null) {
             CryptoClientApplication.getInstance().mainUpdater.refreshStock();
             return;
@@ -68,8 +68,8 @@ public class StockUpdater {
     /**
      * Run from the main thread
      */
-    public static void refreshTicker(final GetStockInfoResponse stock, CurrencyPair currencyPair, boolean force) {
-
+    public static void refreshTicker(final Class<? extends BaseExchange> stockClass, CurrencyPair currencyPair, boolean force) {
+        final GetStockInfoResponse stock = CryptoClientApplication.getInstance().getStockInfo(stockClass);
         final GetTickerResponse getTickerResponseCache = stock.tickersMap.get(currencyPair);
         if (!force && getTickerResponseCache != null && getTickerResponseCache.isValid() && getTickerResponseCache.isFresh()) {
             CryptoClientApplication.getInstance().mainUpdater.refreshTicker();

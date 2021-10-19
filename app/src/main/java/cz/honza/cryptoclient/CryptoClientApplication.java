@@ -49,12 +49,21 @@ public class CryptoClientApplication extends Application {
         return instance;
     }
 
+    public GetStockInfoResponse getStockInfo(String stock) {
+        return stockInfoResponseMap.get(stock);
+    }
+
+    public GetStockInfoResponse getStockInfo(Class<? extends BaseExchange> stock) {
+        return getStockInfo(stock.getSimpleName());
+    }
+
     /**
      *
      * @param index zero based index from combobox
      * @param filter null if no filter
      * @return null (no IndexOutOfBoundException!) or found stock
-     */
+     * */
+
     public Class<? extends BaseExchange> getStock(int index, String filter) {
         if (index < 0 || index >= STOCKS.size()) {
             return null;
@@ -73,6 +82,7 @@ public class CryptoClientApplication extends Application {
         }
         return STOCKS.stream().filter(stock -> stock.getSimpleName().contains(filter)).collect(Collectors.toList());
     }
+
 
     @Override
     public void onCreate() {
