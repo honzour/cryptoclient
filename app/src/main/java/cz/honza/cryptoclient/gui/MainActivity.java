@@ -18,6 +18,7 @@ import org.knowm.xchange.currency.CurrencyPair;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -38,40 +39,6 @@ public class MainActivity extends Activity implements MainUpdater {
     private EditText mStockFilter;
     private EditText mPairFilter;
 
-    private List<CurrencyPair> getPairs(GetStockInfoResponse getStockInfoResponse) {
-        return getStockInfoResponse.currencyPairs.stream()
-               .filter(s -> s.toString().contains(mPairFilter.getText())).collect(Collectors.toList());
-    }
-
-    private List<String> getPairsString(GetStockInfoResponse getStockInfoResponse) {
-        return getPairs(getStockInfoResponse).stream().map(p -> p.toString()).collect(Collectors.toList());
-    }
-
-    private void initPairs() {
-        GetStockInfoResponse getStockInfoResponse = getStockInfo();
-        mPairs.setVisibility(View.VISIBLE);
-        final List<String> pairsString = getPairsString(getStockInfoResponse);
-        final ArrayAdapter adapter = adapterFromPairs(pairsString);
-
-        mPairs.setAdapter(adapter);
-        mPairs.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String pair = getPairsString(getStockInfoResponse).get(i);
-                CurrencyPair currencyPair = getStockInfoResponse.currencyPairs.stream().filter(p -> p.toString().equals(pair)).findFirst().get();
-                StockUpdater.refreshTicker(getStockInfoResponse, currencyPair, false);
-                getStockInfoResponse.selectedPair = i;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                StockUpdater.refreshTicker(getStockInfoResponse, null, false);
-                getStockInfoResponse.selectedPair = -1;
-            }
-        });
-        mPairs.setSelection(getStockInfoResponse.selectedPair);
-    }
-
     private GetStockInfoResponse getStockInfo() {
         int selected = mStocks.getSelectedItemPosition();
         Class<? extends BaseExchange> stockClass = CryptoClientApplication.getInstance().getStock(selected, mStockFilter.getText().toString());
@@ -81,6 +48,51 @@ public class MainActivity extends Activity implements MainUpdater {
         String simpleName = stockClass.getSimpleName();
         return CryptoClientApplication.getInstance().stockInfoResponseMap.get(simpleName);
     }
+
+    private List<CurrencyPair> getPairs() {
+        GetStockInfoResponse getStockInfoResponse = getStockInfo();
+        if (getStockInfoResponse == null) {
+            return Collections.emptyList();
+        }
+        return getStockInfoResponse.currencyPairs.stream()
+               .filter(s -> s.toString().contains(mPairFilter.getText())).collect(Collectors.toList());
+    }
+
+    private CurrencyPair getPair() {
+        List<CurrencyPair> pairs = getPairs();
+        int pos = mPairs.getSelectedItemPosition();
+        if (pos >= 0 && pos < pairs.size()) {
+            return pairs.get(pos);
+        }
+        return null;
+    }
+
+    private List<String> getPairsString() {
+        return getPairs().stream().map(p -> p.toString()).collect(Collectors.toList());
+    }
+
+    private void initPairs() {
+
+        mPairs.setVisibility(View.VISIBLE);
+        final List<String> pairsString = getPairsString();
+        final ArrayAdapter adapter = adapterFromPairs(pairsString);
+        mPairs.setAdapter(adapter);
+        mPairs.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                GetStockInfoResponse getStockInfoResponse = getStockInfo();
+                CurrencyPair currencyPair = getPair();
+                StockUpdater.refreshTicker(getStockInfoResponse, currencyPair, false);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // TODO
+            }
+        });
+    }
+
+
 
     @Override
     public void refreshStock() {
@@ -111,7 +123,10 @@ public class MainActivity extends Activity implements MainUpdater {
     public void refreshTicker() {
         GetStockInfoResponse getStockInfoResponse = getStockInfo();
 
-        CurrencyPair currencyPair = getPairs(getStockInfoResponse).get(mPairs.getSelectedItemPosition());
+        CurrencyPair currencyPair = getPair();
+        if (currencyPair == null) {
+            return;
+        }
         GetTickerResponse getTickerResponse = getStockInfoResponse.tickersMap.get(currencyPair);
         if (getTickerResponse == null) {
             mBidAsk.setText("");
@@ -218,10 +233,7 @@ public class MainActivity extends Activity implements MainUpdater {
             public void onClick(View view) {
                 if (mPairs.getVisibility() == View.VISIBLE) {
                     GetStockInfoResponse getStockInfoResponse = getStockInfo();
-                    StockUpdater.refreshTicker(
-                            getStockInfoResponse,
-                            getStockInfoResponse.currencyPairs.get(getStockInfoResponse.selectedPair),
-                            true);
+                    StockUpdater.refreshTicker(getStockInfoResponse, getPair(),true);
 
                 } else {
                     StockUpdater.refreshStock(mStocks.getSelectedItemPosition(), mStockFilter.getText().toString(),true);

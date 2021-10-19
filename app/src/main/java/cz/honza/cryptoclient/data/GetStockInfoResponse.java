@@ -11,7 +11,6 @@ public class GetStockInfoResponse extends Response {
     public Exchange exchange;
     public List<CurrencyPair> currencyPairs;
     public Map<CurrencyPair, GetTickerResponse> tickersMap = new HashMap<>();
-    public int selectedPair = 0;
 
     public GetStockInfoResponse(Throwable throwable, Exchange exchange, List<CurrencyPair> currencyPairs) {
         super(throwable);
