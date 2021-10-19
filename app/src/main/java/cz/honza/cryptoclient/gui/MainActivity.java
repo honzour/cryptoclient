@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,16 +38,26 @@ public class MainActivity extends Activity implements MainUpdater {
     private EditText mStockFilter;
     private EditText mPairFilter;
 
-    private void initPairs(GetStockInfoResponse getStockInfoResponse) {
+    private List<CurrencyPair> getPairs(GetStockInfoResponse getStockInfoResponse) {
+        return getStockInfoResponse.currencyPairs.stream()
+               .filter(s -> s.toString().contains(mPairFilter.getText())).collect(Collectors.toList());
+    }
+
+    private List<String> getPairsString(GetStockInfoResponse getStockInfoResponse) {
+        return getPairs(getStockInfoResponse).stream().map(p -> p.toString()).collect(Collectors.toList());
+    }
+
+    private void initPairs() {
+        GetStockInfoResponse getStockInfoResponse = getStockInfo();
         mPairs.setVisibility(View.VISIBLE);
-        final List<String> pairsString = getStockInfoResponse.currencyPairs.stream().map(pair -> pair.toString()).collect(Collectors.toList());
+        final List<String> pairsString = getPairsString(getStockInfoResponse);
         final ArrayAdapter adapter = adapterFromPairs(pairsString);
 
         mPairs.setAdapter(adapter);
         mPairs.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String pair = pairsString.get(i);
+                String pair = getPairsString(getStockInfoResponse).get(i);
                 CurrencyPair currencyPair = getStockInfoResponse.currencyPairs.stream().filter(p -> p.toString().equals(pair)).findFirst().get();
                 StockUpdater.refreshTicker(getStockInfoResponse, currencyPair, false);
                 getStockInfoResponse.selectedPair = i;
@@ -87,7 +96,7 @@ public class MainActivity extends Activity implements MainUpdater {
             mBidAsk.setText(getStockInfoResponse.getError());
             return;
         }
-        initPairs(getStockInfoResponse);
+        initPairs();
     }
 
     private String formatDate(long ms) {
@@ -101,7 +110,8 @@ public class MainActivity extends Activity implements MainUpdater {
     @Override
     public void refreshTicker() {
         GetStockInfoResponse getStockInfoResponse = getStockInfo();
-        CurrencyPair currencyPair = getStockInfoResponse.currencyPairs.get(mPairs.getSelectedItemPosition());
+
+        CurrencyPair currencyPair = getPairs(getStockInfoResponse).get(mPairs.getSelectedItemPosition());
         GetTickerResponse getTickerResponse = getStockInfoResponse.tickersMap.get(currencyPair);
         if (getTickerResponse == null) {
             mBidAsk.setText("");
@@ -164,6 +174,23 @@ public class MainActivity extends Activity implements MainUpdater {
         });
     }
 
+    private void initPairFilter() {
+        mPairFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                initPairs();
+            }
+        });
+    }
+
     private void initStocks() {
         ArrayAdapter adapter = adapterFromStocks(CryptoClientApplication.getInstance().getStocks(mStockFilter.getText().toString()));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -211,5 +238,6 @@ public class MainActivity extends Activity implements MainUpdater {
         initStocks();
         initRefresh();
         initStockFilter();
+        initPairFilter();
     }
 }
