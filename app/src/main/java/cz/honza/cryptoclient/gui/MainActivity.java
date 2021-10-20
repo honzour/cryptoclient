@@ -38,6 +38,7 @@ public class MainActivity extends Activity implements MainUpdater {
     private View mRefresh;
     private EditText mStockFilter;
     private EditText mPairFilter;
+    private View mStockActive;
 
     private Class<? extends BaseExchange> getStock() {
         int selected = mStocks.getSelectedItemPosition();
@@ -78,7 +79,7 @@ public class MainActivity extends Activity implements MainUpdater {
 
     private void initPairs() {
 
-        mPairs.setVisibility(View.VISIBLE);
+        mStockActive.setVisibility(View.VISIBLE);
         final List<String> pairsString = getPairsString();
         final ArrayAdapter adapter = adapterFromPairs(pairsString);
         mPairs.setAdapter(adapter);
@@ -99,14 +100,12 @@ public class MainActivity extends Activity implements MainUpdater {
     public void refreshStock() {
         GetStockInfoResponse getStockInfoResponse = getStockInfo();
         if (getStockInfoResponse == null) {
-            mPairs.setVisibility(View.GONE);
-            mBidAsk.setText("");
+            mStockActive.setVisibility(View.GONE);
             return;
         }
         if (!getStockInfoResponse.isValid()) {
             Toast.makeText(MainActivity.this, getStockInfoResponse.getError(), Toast.LENGTH_LONG).show();
-            mPairs.setVisibility(View.GONE);
-            mBidAsk.setText(getStockInfoResponse.getError());
+            mStockActive.setVisibility(View.GONE);
             return;
         }
         initPairs();
@@ -164,7 +163,7 @@ public class MainActivity extends Activity implements MainUpdater {
 
     private void initFields() {
         setContentView(R.layout.activity_main);
-
+        mStockActive = findViewById(R.id.main_stock_is_active);
         mBidAsk = findViewById(R.id.main_bid_ask);
         mStocks = findViewById(R.id.main_stock);
         mPairs = findViewById(R.id.main_pair);
@@ -220,7 +219,7 @@ public class MainActivity extends Activity implements MainUpdater {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                // TODO
+                mStockActive.setVisibility(View.GONE);
             }
         });
         mStocks.setSelection(CryptoClientApplication.getInstance().selectedStock);
@@ -231,7 +230,7 @@ public class MainActivity extends Activity implements MainUpdater {
         mRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mPairs.getVisibility() == View.VISIBLE) {
+                if (mStockActive.getVisibility() == View.VISIBLE) {
                     StockUpdater.refreshTicker(getStock(), getPair(),true);
 
                 } else {
