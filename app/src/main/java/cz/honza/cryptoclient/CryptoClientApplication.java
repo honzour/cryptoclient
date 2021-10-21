@@ -29,7 +29,6 @@ public class CryptoClientApplication extends Application {
 
     public MainUpdater mainUpdater;
     private final List<Class<? extends BaseExchange>> STOCKS = new ArrayList<>();
-    public int selectedStock = 0;
     public Map<String, GetStockInfoResponse> stockInfoResponseMap = new HashMap<>();
 
 

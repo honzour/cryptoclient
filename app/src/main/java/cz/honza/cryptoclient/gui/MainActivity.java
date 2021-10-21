@@ -35,10 +35,12 @@ public class MainActivity extends Activity implements MainUpdater {
     private TextView mBidAsk;
     private Spinner mStocks;
     private Spinner mPairs;
-    private View mRefresh;
+    private View mRefreshStock;
+    private View mRefreshPair;
     private EditText mStockFilter;
     private EditText mPairFilter;
     private View mStockActive;
+    private View mPairActive;
 
     private Class<? extends BaseExchange> getStock() {
         int selected = mStocks.getSelectedItemPosition();
@@ -78,22 +80,26 @@ public class MainActivity extends Activity implements MainUpdater {
     }
 
     private void initPairs() {
-
-        mStockActive.setVisibility(View.VISIBLE);
+        mRefreshPair.setEnabled(false);
+        mPairActive.setVisibility(View.GONE);
         final List<String> pairsString = getPairsString();
         final ArrayAdapter adapter = adapterFromPairs(pairsString);
         mPairs.setAdapter(adapter);
         mPairs.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mPairActive.setVisibility(View.GONE);
+                mRefreshPair.setEnabled(true);
                 StockUpdater.refreshTicker(getStock(), getPair(), false);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                // TODO
+                mPairActive.setVisibility(View.GONE);
+                mRefreshPair.setEnabled(false);
             }
         });
+        mPairs.setSelection(0);
     }
 
     @Override
@@ -108,6 +114,7 @@ public class MainActivity extends Activity implements MainUpdater {
             mStockActive.setVisibility(View.GONE);
             return;
         }
+        mStockActive.setVisibility(View.VISIBLE);
         initPairs();
     }
 
@@ -125,13 +132,15 @@ public class MainActivity extends Activity implements MainUpdater {
 
         CurrencyPair currencyPair = getPair();
         if (currencyPair == null) {
+            mPairActive.setVisibility(View.GONE);
             return;
         }
         GetTickerResponse getTickerResponse = getStockInfoResponse.tickersMap.get(currencyPair);
         if (getTickerResponse == null) {
-            mBidAsk.setText("");
+            mPairActive.setVisibility(View.GONE);
             return;
         }
+        mPairActive.setVisibility(View.VISIBLE);
         if (!getTickerResponse.isValid()) {
             mBidAsk.setText(getTickerResponse.getError());
         } else {
@@ -164,10 +173,12 @@ public class MainActivity extends Activity implements MainUpdater {
     private void initFields() {
         setContentView(R.layout.activity_main);
         mStockActive = findViewById(R.id.main_stock_is_active);
+        mPairActive = findViewById(R.id.main_pair_is_active);
         mBidAsk = findViewById(R.id.main_bid_ask);
         mStocks = findViewById(R.id.main_stock);
         mPairs = findViewById(R.id.main_pair);
-        mRefresh = findViewById(R.id.main_refresh);
+        mRefreshPair = findViewById(R.id.main_refresh_pair);
+        mRefreshStock = findViewById(R.id.main_refresh_stock);
         mPairFilter = findViewById(R.id.main_filter_currency);
         mStockFilter = findViewById(R.id.main_filter_stock);
     }
@@ -207,35 +218,38 @@ public class MainActivity extends Activity implements MainUpdater {
     }
 
     private void initStocks() {
+        mRefreshStock.setEnabled(false);
         ArrayAdapter adapter = adapterFromStocks(CryptoClientApplication.getInstance().getStocks(mStockFilter.getText().toString()));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mStocks.setAdapter(adapter);
         mStocks.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                CryptoClientApplication.getInstance().selectedStock = i;
+                mRefreshStock.setEnabled(true);
                 StockUpdater.refreshStock(getStock(), false);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
+                mRefreshStock.setEnabled(false);
                 mStockActive.setVisibility(View.GONE);
             }
         });
-        mStocks.setSelection(CryptoClientApplication.getInstance().selectedStock);
+        mStocks.setSelection(0);
         StockUpdater.refreshStock(getStock(), false);
     }
 
     private void initRefresh() {
-        mRefresh.setOnClickListener(new View.OnClickListener() {
+        mRefreshPair.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mStockActive.getVisibility() == View.VISIBLE) {
-                    StockUpdater.refreshTicker(getStock(), getPair(),true);
-
-                } else {
-                    StockUpdater.refreshStock(getStock(),true);
-                }
+                StockUpdater.refreshTicker(getStock(), getPair(),true);
+            }
+        });
+        mRefreshStock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                StockUpdater.refreshStock(getStock(),true);
             }
         });
     }

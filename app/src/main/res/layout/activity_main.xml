@@ -28,17 +28,29 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <Spinner
-            android:id="@+id/main_stock"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/main_refresh_stock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R" />
+
+            <Spinner
+                android:id="@+id/main_stock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/main_stock_is_active"
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -58,23 +70,36 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <Spinner
-                android:id="@+id/main_pair"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/main_bid_ask"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/main_refresh"
+                <Button
+                    android:id="@+id/main_refresh_pair"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="R" />
+
+                <Spinner
+                    android:id="@+id/main_pair"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/main_pair_is_active"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/refresh" />
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/main_bid_ask"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
