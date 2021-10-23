@@ -5,13 +5,20 @@ import android.app.Application;
 
 import org.knowm.xchange.BaseExchange;
 import org.knowm.xchange.binance.BinanceExchange;
-import org.knowm.xchange.bitfinex.BitfinexExchange;
+import org.knowm.xchange.bitflyer.BitflyerExchange;
+import org.knowm.xchange.bitmex.BitmexExchange;
 import org.knowm.xchange.bitstamp.BitstampExchange;
+import org.knowm.xchange.bittrex.BittrexExchange;
+import org.knowm.xchange.cexio.CexIOExchange;
 import org.knowm.xchange.coinbasepro.CoinbaseProExchange;
 import org.knowm.xchange.coinmate.CoinmateExchange;
 import org.knowm.xchange.gemini.v1.GeminiExchange;
+import org.knowm.xchange.hitbtc.v2.HitbtcExchange;
 import org.knowm.xchange.kraken.KrakenExchange;
+import org.knowm.xchange.kucoin.KucoinExchange;
+import org.knowm.xchange.lgo.LgoExchange;
 import org.knowm.xchange.poloniex.PoloniexExchange;
+import org.knowm.xchange.simulated.SimulatedExchange;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,15 +40,21 @@ public class CryptoClientApplication extends Application {
 
 
     private void initStocks() {
+        STOCKS.add(BinanceExchange.class);
+        STOCKS.add(BitflyerExchange.class);
+        STOCKS.add(BitmexExchange.class);
         STOCKS.add(BitstampExchange.class);
+        STOCKS.add(BittrexExchange.class);
+        STOCKS.add(CexIOExchange.class);
+        STOCKS.add(CoinbaseProExchange.class);
         STOCKS.add(CoinmateExchange.class);
         STOCKS.add(GeminiExchange.class);
-        STOCKS.add(PoloniexExchange.class);
-        STOCKS.add(BinanceExchange.class);
-        STOCKS.add(BitstampExchange.class);
-        STOCKS.add(BitfinexExchange.class);
+        STOCKS.add(HitbtcExchange.class);
         STOCKS.add(KrakenExchange.class);
-        STOCKS.add(CoinbaseProExchange.class);
+        STOCKS.add(KucoinExchange.class);
+        STOCKS.add(LgoExchange.class);
+        STOCKS.add(PoloniexExchange.class);
+        STOCKS.add(SimulatedExchange.class);
     }
 
     public static CryptoClientApplication getInstance() {
