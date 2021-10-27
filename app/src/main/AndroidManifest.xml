@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cz.honza.cryptoclient">
+    package="cz.honza.kryptoklient">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
-        android:name="CryptoClientApplication"
+        android:name=".KryptoKlientApplication"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CryptoClient">
+        android:theme="@style/Theme.KryptoKlient">
         <activity
             android:name=".gui.MainActivity"
             android:exported="true"

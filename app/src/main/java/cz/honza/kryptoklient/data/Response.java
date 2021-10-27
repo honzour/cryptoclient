@@ -1,4 +1,4 @@
-package cz.honza.cryptoclient.data;
+package cz.honza.kryptoklient.data;
 
 
 public class Response {

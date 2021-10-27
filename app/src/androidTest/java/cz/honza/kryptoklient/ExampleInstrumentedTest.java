@@ -1,4 +1,4 @@
-package cz.honza.cryptoclient;
+package cz.honza.kryptoklient;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("cz.honza.cryptoclient", appContext.getPackageName());
+        assertEquals("cz.honza.kryptoklient", appContext.getPackageName());
     }
 }

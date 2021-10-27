@@ -1,4 +1,4 @@
-package cz.honza.cryptoclient.gui;
+package cz.honza.kryptoklient.gui;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
-import cz.honza.cryptoclient.CryptoClientApplication;
-import cz.honza.cryptoclient.R;
-import cz.honza.cryptoclient.data.GetStockInfoResponse;
-import cz.honza.cryptoclient.data.GetTickerResponse;
-import cz.honza.cryptoclient.nologin.StockUpdater;
+import cz.honza.kryptoklient.KryptoKlientApplication;
+import cz.honza.kryptoklient.R;
+import cz.honza.kryptoklient.data.GetStockInfoResponse;
+import cz.honza.kryptoklient.data.GetTickerResponse;
+import cz.honza.kryptoklient.nologin.StockUpdater;
 
 public class MainActivity extends Activity implements MainUpdater {
 
@@ -44,7 +44,7 @@ public class MainActivity extends Activity implements MainUpdater {
 
     private Class<? extends BaseExchange> getStock() {
         int selected = mStocks.getSelectedItemPosition();
-        return CryptoClientApplication.getInstance().getStock(selected, mStockFilter.getText().toString());
+        return KryptoKlientApplication.getInstance().getStock(selected, mStockFilter.getText().toString());
     }
 
     private GetStockInfoResponse getStockInfo() {
@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements MainUpdater {
             return null;
         }
         String simpleName = stockClass.getSimpleName();
-        return CryptoClientApplication.getInstance().stockInfoResponseMap.get(simpleName);
+        return KryptoKlientApplication.getInstance().stockInfoResponseMap.get(simpleName);
     }
 
     private List<CurrencyPair> getPairs() {
@@ -219,7 +219,7 @@ public class MainActivity extends Activity implements MainUpdater {
 
     private void initStocks() {
         mRefreshStock.setEnabled(false);
-        ArrayAdapter adapter = adapterFromStocks(CryptoClientApplication.getInstance().getStocks(mStockFilter.getText().toString()));
+        ArrayAdapter adapter = adapterFromStocks(KryptoKlientApplication.getInstance().getStocks(mStockFilter.getText().toString()));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mStocks.setAdapter(adapter);
         mStocks.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -257,7 +257,7 @@ public class MainActivity extends Activity implements MainUpdater {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CryptoClientApplication.getInstance().mainUpdater = this;
+        KryptoKlientApplication.getInstance().mainUpdater = this;
         initFields();
         initStocks();
         initRefresh();

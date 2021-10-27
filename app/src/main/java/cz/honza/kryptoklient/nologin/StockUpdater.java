@@ -1,4 +1,4 @@
-package cz.honza.cryptoclient.nologin;
+package cz.honza.kryptoklient.nologin;
 
 import android.os.Handler;
 
@@ -12,9 +12,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import cz.honza.cryptoclient.CryptoClientApplication;
-import cz.honza.cryptoclient.data.GetStockInfoResponse;
-import cz.honza.cryptoclient.data.GetTickerResponse;
+import cz.honza.kryptoklient.KryptoKlientApplication;
+import cz.honza.kryptoklient.data.GetStockInfoResponse;
+import cz.honza.kryptoklient.data.GetTickerResponse;
 
 public class StockUpdater {
 
@@ -33,17 +33,16 @@ public class StockUpdater {
      * Run from the main thread
      */
     public static void refreshStock(final Class<? extends BaseExchange> stockClass, boolean force) {
-        //final Class<? extends BaseExchange> stockClass = CryptoClientApplication.getInstance().getStock(index, filter);
         if (stockClass == null) {
-            CryptoClientApplication.getInstance().mainUpdater.refreshStock();
+            KryptoKlientApplication.getInstance().mainUpdater.refreshStock();
             return;
         }
         final String stockName = stockClass.getSimpleName();
         if (!force) {
 
-            final GetStockInfoResponse getStockInfoResponse = CryptoClientApplication.getInstance().stockInfoResponseMap.get(stockName);
+            final GetStockInfoResponse getStockInfoResponse = KryptoKlientApplication.getInstance().stockInfoResponseMap.get(stockName);
             if (getStockInfoResponse != null && getStockInfoResponse.isValid() && getStockInfoResponse.isFresh()) {
-                CryptoClientApplication.getInstance().mainUpdater.refreshStock();
+                KryptoKlientApplication.getInstance().mainUpdater.refreshStock();
                 return;
             }
         }
@@ -57,8 +56,8 @@ public class StockUpdater {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        CryptoClientApplication.getInstance().stockInfoResponseMap.put(stockName, getStockInfoResponse);
-                        CryptoClientApplication.getInstance().mainUpdater.refreshStock();
+                        KryptoKlientApplication.getInstance().stockInfoResponseMap.put(stockName, getStockInfoResponse);
+                        KryptoKlientApplication.getInstance().mainUpdater.refreshStock();
                     }
                 });
             }
@@ -69,10 +68,10 @@ public class StockUpdater {
      * Run from the main thread
      */
     public static void refreshTicker(final Class<? extends BaseExchange> stockClass, CurrencyPair currencyPair, boolean force) {
-        final GetStockInfoResponse stock = CryptoClientApplication.getInstance().getStockInfo(stockClass);
+        final GetStockInfoResponse stock = KryptoKlientApplication.getInstance().getStockInfo(stockClass);
         final GetTickerResponse getTickerResponseCache = stock.tickersMap.get(currencyPair);
         if (!force && getTickerResponseCache != null && getTickerResponseCache.isValid() && getTickerResponseCache.isFresh()) {
-            CryptoClientApplication.getInstance().mainUpdater.refreshTicker();
+            KryptoKlientApplication.getInstance().mainUpdater.refreshTicker();
             return;
         }
         final Handler handler = new Handler();
@@ -86,7 +85,7 @@ public class StockUpdater {
                     @Override
                     public void run() {
                         stock.tickersMap.put(currencyPair, getTickerResponse);
-                        CryptoClientApplication.getInstance().mainUpdater.refreshTicker();
+                        KryptoKlientApplication.getInstance().mainUpdater.refreshTicker();
                     }
                 });
             }

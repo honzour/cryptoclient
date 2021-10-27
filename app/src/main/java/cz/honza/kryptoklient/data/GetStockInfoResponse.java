@@ -1,4 +1,4 @@
-package cz.honza.cryptoclient.data;
+package cz.honza.kryptoklient.data;
 
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.CurrencyPair;

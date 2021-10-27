@@ -1,4 +1,4 @@
-package cz.honza.cryptoclient;
+package cz.honza.kryptoklient;
 
 import org.junit.Test;
 

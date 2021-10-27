@@ -1,4 +1,4 @@
-package cz.honza.cryptoclient;
+package cz.honza.kryptoklient;
 
 import android.app.Application;
 
@@ -27,11 +27,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import cz.honza.cryptoclient.data.GetStockInfoResponse;
-import cz.honza.cryptoclient.gui.MainUpdater;
+import cz.honza.kryptoklient.data.GetStockInfoResponse;
+import cz.honza.kryptoklient.gui.MainUpdater;
 
-public class CryptoClientApplication extends Application {
-    private static CryptoClientApplication instance = null;
+public class KryptoKlientApplication extends Application {
+    private static KryptoKlientApplication instance = null;
 
 
     public MainUpdater mainUpdater;
@@ -57,7 +57,7 @@ public class CryptoClientApplication extends Application {
         STOCKS.add(SimulatedExchange.class);
     }
 
-    public static CryptoClientApplication getInstance() {
+    public static KryptoKlientApplication getInstance() {
         return instance;
     }
 

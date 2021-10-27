@@ -6,7 +6,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "cz.honza.cryptoclient"
+        applicationId "cz.honza.kryptoklient"
         minSdk 26
         targetSdk 31
         versionCode 1
