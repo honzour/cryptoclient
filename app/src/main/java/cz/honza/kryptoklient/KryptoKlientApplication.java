@@ -4,7 +4,6 @@ import android.app.Application;
 
 
 import org.knowm.xchange.BaseExchange;
-import org.knowm.xchange.binance.BinanceExchange;
 import org.knowm.xchange.bitflyer.BitflyerExchange;
 import org.knowm.xchange.bitmex.BitmexExchange;
 import org.knowm.xchange.bitstamp.BitstampExchange;
@@ -40,7 +39,6 @@ public class KryptoKlientApplication extends Application {
 
 
     private void initStocks() {
-        STOCKS.add(BinanceExchange.class);
         STOCKS.add(BitflyerExchange.class);
         STOCKS.add(BitmexExchange.class);
         STOCKS.add(BitstampExchange.class);
